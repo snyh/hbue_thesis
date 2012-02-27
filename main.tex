@@ -1,0 +1,32 @@
+\documentclass{data/hbue}
+
+\usepackage{hyphenat}
+\begin{document}
+
+%读取封面信息
+\input{info}
+
+%生成封面
+\input{data/cover}
+
+%摘要
+\include{abstract}
+
+%生成目录
+\tableofcontents
+
+\pagestyle{fancy}
+\include{introduce}
+\include{filemanager}
+\include{filespec}
+\include{protocol}
+
+
+%参考文献
+\begin{thebibliography}{99}
+	\bibitem{UDT}
+		A.   Nonymous et al.  \ 2005, 123, 456\\[-20pt]
+	\bibitem{oe04}
+		A.  N.   Other \& S.  O.  M.   Ebody 2004,  123, 456\\[-20pt]
+\end{thebibliography}
+\end{document}
