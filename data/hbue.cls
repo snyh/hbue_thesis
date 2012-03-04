@@ -1,8 +1,11 @@
-%%
+%% 第一行加注释符号可以让vim辨认出这是一个cls文件.
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{hbue}[2012/01/10]
-\LoadClass[a4paper,oneside,titlepage]{book}
+\LoadClass[a4paper,oneside,titlepage]{book} %主要使用book的frontmatter等命令.
+
+%论文硬性规定如若有变自行更改
 \RequirePackage[left=2.5cm, right=2.5cm, top=3cm, bottom=2.5cm]{geometry}
+
 \RequirePackage[slantfont,boldfont,CJKnumber,CJKchecksingle]{xeCJK} %中文支持
 \XeTeXlinebreaklocale ``zh'' %针对中文断行
 \XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt %自动断行允许范围
@@ -13,18 +16,18 @@
 \RequirePackage[colorlinks, linkcolor=black]{hyperref} %增加超级链接功能
 \RequirePackage{longtable} %开题报告需要使用这个作表
 \RequirePackage{fontspec, xunicode}
+\RequirePackage{fix-cm} %如果不启用则cmr等字体不能自动缩放.
+\RequirePackage{lmodern} %同上, 似乎是解决Latin Modern字体的缩放问题
 %\RequirePackage{calc}
 %\RequirePackage{float}
 %\RequirePackage{graphicx}
 %\RequirePackage{setspace}
 %\RequirePackage{graphpap}
 %\RequirePackage{tabularx}
-%\RequirePackage{fix-cm}
 
-%硬性要求正文行距1.5倍
-\linespread{1.5}
+%硬性要求正文行距1.5倍, 暂时不清楚以下2条命令使用哪一条.
+\linespread{1.5} 
 \renewcommand{\baselinestretch}{1.5}
-\renewcommand{\arraystretch}{0.6}
 
 %pt到字号的映射参考http://wiki.ctex.org/index.php/LaTeX/%E5%B0%BA%E5%AF%B8
 \DeclareRobustCommand{\chuhao}{\fontsize{42pt}{\baselineskip}\selectfont}
@@ -45,6 +48,8 @@
 \DeclareRobustCommand{\bahao}{\fontsize{5pt}{\baselineskip}\selectfont}
 
 
+%字体映射,需要根据自己系统中有的字体进行修改,使用fc-list查看现有字体
+
 %中文字体
 \setCJKmainfont{Adobe Song Std}
 \setCJKsansfont{Adobe Fangsong Std}
@@ -52,17 +57,16 @@
 \setmainfont{URW Bookman L}
 \setromanfont{URW Palladio L}
 
-%常用字体映射,需要根据系统中有的字体进行修改,使用fc-list查看
 %微软字体, win下可使用这组字体
 %\setCJKfamilyfont{HeiTi}{SimHei}
 %\setCJKfamilyfont{SongTi}{SimSun}
 %\setCJKfamilyfont{KaiTi}{SimKai}
-
-%为字体选择创建简单的命令
 \setCJKfamilyfont{HeiTi}{Adobe Heiti Std}
 \setCJKfamilyfont{SongTi}{Adobe Song Std}
 \setCJKfamilyfont{FangSong}{Adobe Fangsong Std}
 \setCJKfamilyfont{KaiTi}{Adobe Kaiti Std}
+
+%为字体选择创建简单的命令
 \DeclareRobustCommand{\heiti}{\CJKfamily{HeiTi}}
 \DeclareRobustCommand{\kaiti}{\CJKfamily{KaiTi}}
 \DeclareRobustCommand{\songti}{\CJKfamily{SongTi}}
@@ -102,7 +106,7 @@
 {}{\quad\titlerule*[8pt]{.}\contentspage}
 
 
-%一些自定义命令处理封面和开题报告的
+%以下为自定义命令处理封面和开题报告的,与版式无关可以不关注
 \DeclareRobustCommand{\stitle}{}
 \DeclareRobustCommand{\hbuetitle}[1]{%
 \renewcommand{\stitle}{#1}%
@@ -163,4 +167,3 @@
 \renewcommand{\sreportsuggestion}{#1}%
 }
 
-\newcommand{\ul}{\underline}
