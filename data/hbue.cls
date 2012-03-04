@@ -1,10 +1,13 @@
 %% 第一行加注释符号可以让vim辨认出这是一个cls文件.
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{hbue}[2012/01/10]
-\LoadClass[a4paper,oneside,titlepage]{book} %主要使用book的frontmatter等命令.
+
+%主要使用book的frontmatter等命令, 其中12pt是规定的小四号字体
+\LoadClass[a4paper,12pt,oneside,titlepage]{book} 
 
 %论文硬性规定如若有变自行更改
-\RequirePackage[left=2.5cm, right=2.5cm, top=3cm, bottom=2.5cm]{geometry}
+%left=3.0cm包括装订线的0.5cm
+\RequirePackage[left=3.0cm, right=2.5cm, top=3cm, bottom=2.5cm]{geometry}
 
 \RequirePackage[slantfont,boldfont,CJKnumber,CJKchecksingle]{xeCJK} %中文支持
 \XeTeXlinebreaklocale ``zh'' %针对中文断行
@@ -13,6 +16,7 @@
 \defaultfontfeatures{Mapping=tex-text}
 \RequirePackage{fancyhdr} %页眉页脚
 \RequirePackage{titletoc} %修改目录样式需要
+\RequirePackage{titlesec}
 \RequirePackage[colorlinks, linkcolor=black]{hyperref} %增加超级链接功能
 \RequirePackage{longtable} %开题报告需要使用这个作表
 \RequirePackage{fontspec, xunicode}
@@ -75,7 +79,7 @@
 
 %设置页眉页脚
 %字体和大小为硬性要求宋体小五, 页眉居中页脚靠右
-\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\headrulewidth}{0.5pt} %页眉线厚度
 \fancypagestyle{plain}{%不重新设置一般则在章节开头没有页眉
 \fancyhf{}
 \fancyhead[C]{\xiaowu\songti 湖北经济学院本科毕业设计\-(论文)}
@@ -104,6 +108,12 @@
 \titlecontents{section}[1em]{}%
 {\contentspush{\thecontentslabel\quad}}%
 {}{\quad\titlerule*[8pt]{.}\contentspage}
+
+%要求章居中(下面的centering)
+%节,子节左2空对齐(默认就是这种)
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\centering}
+  {第 \thechapter 章}{0pt}{\Huge}
 
 
 %以下为自定义命令处理封面和开题报告的,与版式无关可以不关注
