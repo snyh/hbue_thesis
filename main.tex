@@ -10,7 +10,7 @@
 \begin{document}
 
 \lstset{%代码显示全局设置
-basicstyle=\ttfamily\normalsize,
+basicstyle=\small,
 language=C++,
 numbersep=5pt,
 tabsize=2,
@@ -32,7 +32,7 @@ keywordstyle=\color{blue},
 %生成封面
 \input{data/cover}
 
-\frontmatter
+\frontmatter\pagenumbering{Roman} %目录本身要求使用大写罗马编页号
 
 %生成目录
 \tableofcontents
@@ -40,27 +40,30 @@ keywordstyle=\color{blue},
 \mainmatter
 
 %以下为具体章节文件.
-%\include{content/abstract}
-%\addcontentsline{toc}{chapter}{摘要}  %手动添加目录项
-%\include{content/introduce}
-%\addcontentsline{toc}{chapter}{前言}
-%\include{content/envirment}
-%\include{content/corestruct}
-%\include{content/sendrecv}
-%\include{content/coreother}
-%\include{content/gui}
-%\include{content/frontend}
-%\include{content/test}
+\addcontentsline{toc}{chapter}{摘要}  %手动添加目录项
+\include{content/abstract}
+\include{content/introduce}
+\include{content/envirment}
+\include{content/corestruct}
+\include{content/sendrecv}
+\include{content/coreother}
+\include{content/gui}
+\include{content/frontend}
+\include{content/test}
+
+\addcontentsline{toc}{chapter}{结束语}
 
 \backmatter
 
-%开始附录
-
 %参考文献
+\bibliographystyle{plain}
+\addcontentsline{toc}{chapter}{附录及参考文献}
+
 \begin{thebibliography}{99}
 	\bibitem{UDT}
-		(Test) A.   Nonymous et al.  \ 2005, 123, 456\\[-20pt]
+		(Test) A.   Nonymous et al.  \ 2005, 123, 456
 	\bibitem{oe04}
-		(Test) A.  N.   Other \& S.  O.  M.   Ebody 2004,  123, 456\\[-20pt]
+		(Test) A.  N.   Other \& S.  O.  M.   Ebody 2004,  123, 456
 \end{thebibliography}
+
 \end{document}
