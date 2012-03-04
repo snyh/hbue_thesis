@@ -1,0 +1,295 @@
+\chapter{用户界面库}
+本章第一节先介绍一些造初期考虑使用的用户界面程序库(GUI);
+第二小节阐述了HTML作为本次设计的选择的原因以及使用这种技术会遇到的一些问题以及解
+决方案.
+第三小节简要的介绍了作为本次设计而附带产生的一款简单的HttpServer.
+第四小节根据实际情况介绍了使用脚本语言来帮助我们简化开发.
+\section{常见GUI库}
+Win平台专属的库微软本身的MFC, Windows Forms(.net), Borland的OWL(Object Windows Library);
+Mac平台专属的库Cocoa,
+Linux平台由于操作系统本身是没有定义GUI的所以一般来说没有专属GUI库.
+由于多平台运行是本次设计的一个硬性目标所以以上GUI库不予考虑.
+
+能够提供跨平台支持的GUI库也是非常多,但有的GUI库只提供一种编程语言如Java的
+AWT,SWT, 所以这类GUI也不在考虑范围之类.
+
+还有一些出名的的GUI库如QT, GTK虽然比较熟悉但这类GUI由于不仅仅包含了GUI的内容而且
+几乎是从底层完全重写导致编译出来的程序过大(根据以往经验使用strip,upx后也会达到5M
+左右,GTK稍小), 因此考虑到最终程序的尺寸(footprint)问题, 犹豫之后还是放弃了这2个选择.
+
+和QT,GTK类似的一款wxWidget在windows上优化之后可以让最终程序保持在2M左右,也是我最
+熟悉的GUI库.
+
+以上介绍的一些GUI库除了Window Forms, AWT,SWT因为和自身平台高度集成其外,其他GUI库
+都由于GUI本身的复杂性以及历史原因导致有非常多的东西与现今标准中的内容重复,但又由
+于向后兼容以及这些内容已经在库中根深蒂固无法去除. 
+
+所以在初期还有考虑过FLTK这款简单的仅仅提供界面部分的GUI库.
+
+但犹豫再三后还是决定放弃以上GUI库, 主要原因在于
+\begin{itemize}
+	\item 使用系统平台提供的GUI虽然可以不明显增加最终程序尺寸,但却不具备跨平台的
+		特性.
+	\item 使用平台无关的GUI一般会导致最终程序尺寸急剧膨胀.
+	\item 一些小巧的GUI库虽然不会导致最终程序尺寸过大但此类GUI一般都较为简陋.
+\end{itemize}
+
+因此萌生使用HTML作为程序界面的想法,理由如下:
+\begin{itemize}
+	\item HTML依托用户的游览器本身来渲染界面, 可以以最小的代价(程序大小方面)来完
+		成界面显示. 
+	\item 使用JS可以方便的处理界面逻辑, 使用CSS灵活的定义显示界面.
+	\item HTML作为前端界面已经在暗中普及起来, 只有稍微注意就可以发现仅仅国内,各
+		大软件的最新版本中Web技术都已经在界面显示上占据越来越大的作用. 
+	\item HTML可以使设计变得更简单, 使用WEB技术意味着你在设计程序的时候就已经强
+		制设计者是核心逻辑与界面逻辑分开处理. 这样可以让强迫设计者时刻提醒自己核
+		心逻辑应该提供出来的接口. 同时在多人合作的时候可以并行展开工作. 界面部分
+		与核心部分可以做到没有任何耦合, 他们直接的通讯是通过中间一层简单的包装进
+		行联系的.
+\end{itemize}
+因此在选择WEB技术之后, 可以满足程序尺寸的要求, 并且能提供更加简单且灵活的界面.
+
+\section{选择WEB的问题}
+
+虽然使用WEB技术有非常多诱人的地方, 但凡事都不会完美, WEB也有着宁人烦恼的问题.
+\begin{itemize}
+	\item 由于种种原因在国内至今存在着大量已经被其开发者淘汰的游览器, 这些游览器
+		导致同一份文件最终显示效果却不同.
+	\item 这一点和上面是对立的, 就是如果在程序中内嵌自己的渲染部分则可以保证用户
+		体验上的统一, 但会急剧增加尺寸.
+	\item 由于WEB技术和C++或其他语言写的程序是独立的因此需要自己处理他们之间的通
+		讯.
+	\item 需要依赖服务器来提供内容.
+	\item HTML/CSS/JS/IMG这类文件和应用程序单独分离在发行程序的时候会稍显复杂.
+\end{itemize}
+
+对于存在的古老游览器我选择的是稍激进的方法--不予理会. 虽然第一感觉是不理智,但新
+技术是需要时间和人的推进才会普及起来, 这也是现在部分非商业网站选择明确放弃这些游
+览器的原因. 
+这是很多新应用新网站都必须进行的一个困难选择. 不过好在各大厂商都在积极的推进
+HTML5技术而且和C++11类似,在标准还没正式发布前大部分功能已经在实践中运用了. 
+这一问题的另外一个缓解方案是使用第三方的JS库来处理游览器的差异,这一点将在下一章
+中介绍.
+
+内嵌一个游览器来给用户统一的体验是非常好的选择, 但由于尺寸原因导致本文设计的这类
+程序无法接受. 如果是其他程序如自用, 定制产品或大规模的程序都可以选择这种方案,
+这里一般可以选择WebKit作为内核进行移植或使用第三方库, 如果选择使用QT已经原生支持
+WebKit了, 其他库或语言一般也会有对应binding.
+
+Web页面需要和应用程序进行信息交换, 这一点可以通过jsonp等常规方案解决简单解决, 如
+果在HTML5普及之后也可以使用WebSocket进行更加完善的处理.
+
+最后两点可以通过一种方案一次完美解决就是自己写一个简单的服务器, 通过源码级别集成
+到应用程序里, Web页面需要的一些文件在调式完成后就编译进这个服务器内部.
+
+这里选择使用自己编写一款HttpServer的原因主要在于没有找到简单的解决处理最后一点的
+方案, 如果仅仅是内嵌一款普通HTTP服务器有很多优秀的开源项目可供选择如lighthttpd.
+
+\section{AppWebServer的介绍}
+AppWebServer是为了完成本次设计特意另行编写的一款专门用来集成到其他程序里的小型
+HttpServer, 且提供调式和发行两种模式. 调式模式下AWS通过读取指定目录下的文件进行
+工作, 发行模式下AWS则不读取任何外部文件,直接将文件编译到程序内部.
+
+使用方式十分简单,如下代码就建立了一个简单的HTTP Server,可以读取doc\_root(默认)下
+的文件进行工作.
+\begin{lstlisting}
+	#inlcude <AppWebServer.hpp>
+	int main()
+	{
+		AWS::Server s;
+		s.run();
+	}
+\end{lstlisting}
+另外也可以通过注册RPC::Service到Server里去, 这样游览器使用js发送一个请求到
+``/rpc.cgi''上就可以调用Service提供的函数来获得所需功能. js端发送消息的格式会在
+下一章中进行介绍.
+这里只讨论后端代码.
+注册Service也是很简单的,如以下代码注册一个提供文件系统信息的service到server里去.
+\begin{lstlisting}
+	#inlcude <AppWebServer.hpp>
+	AWS::Service& rpc_filesystem();
+	int main()
+	{
+		AWS::Server s;
+		AWS::RPCServer rpc;
+		rpc.install_service(rpc_filesystem());
+		s.set_rpc(rpc);
+		s.run();
+	}
+
+	...
+
+	AWS::Service& rpc_filesystem()
+	{
+		static AWS::Service filesystem;
+
+		//service`的名称`
+		filesystem.name = "filesystem";
+
+		//`service的方法列表, 以下语法使用C++11提供的lambda语法来编写匿名函数`
+		//`使用Uniform initialization语法来初始化service的方法列表.`
+		//`使用auto语法来自动推导函数返回类型.`
+		filesystem.methods = {
+			{
+				//`函数名称`
+				"list_file",  
+				//`具体的函数代码`
+				[](const AWS::JSON& j){
+					AWS::JSON result;
+					if (j["path"].isString()) {
+						string p(j["path"].asString());
+						for (auto& n : list_file(p)) {
+							AWS::JSON node;
+							node["type"] = n.type;
+							node["path"] = n.path;
+							node["name"] = n.name;
+							result.append(node);
+						}
+					} 
+					return result;
+				}
+			},
+			{
+			\\`提供的其他函数`.
+			}
+		};
+		return filesystem;
+	}
+\end{lstlisting}
+
+一个service由service名称和方法列表组成, 一般一个service会提供多个函数. 
+其中list\_file是完成具体工作的函数, 这个函数接受一个路径然后返回此路径下所有的文
+件信息. AWS::JSON底层使用的是jsoncpp的json::value. 
+所有service的函数都会返回一个AWS::JSON类型来表达返回结果, 
+程序核心部分和界面部分就是根据这些service提供的接口来完成设计的,如需要制作一个提
+供文件选择的界面模块则可根据这里提供的filesystem service来实现, WebPage通过传递
+一个路径(最开始可以是.代表当前目录)给``filesystem''服务的``list\_file''函数就可以
+得到这个目录下的文件信息,然后就可以继续根据得到的信息进行下一步请求.
+
+这个模块也是这次设计中实际碰到的问题, 由于文件传输肯定涉及到文件目录,但当前游览
+器基于安全考虑都是不允许得到文件路径的, 通过``<input type=file>''只能得到文件的
+名称而无法获得完整路径. 这在普通Web应用上是完全可以理解的,而且已经在现今所以较新
+版本游览器中执行了. 所以必须要自己实现遍历文件系统的功能, 最终实现结果比当初遇到
+这个问题预想的要容易多的解决. 仅仅使用100来行的C++和100行的JS代码就完成了这个功能.
+
+下一节介绍完成AWS发行模式使用到的技术.
+
+\section{使用脚本语言来生成资源}
+linux下曾多次遇到程序里需要嵌入外部文件的问题,
+Win下可以方便的通过资源文件来解决,如win下的icon一般都是作为资源文件放到pe格式文
+件里的, 并且通过一定的hack手段可以实现动态更新exe里的资源文件(可以实现配置信息保
+存到exe文件内).
+
+Linux下我曾多次寻找对应技术但没有什么收获,因此一般都是遇到的时候用脚本语言来生成
+C++代码作为补救. 以前几次是使用Perl来编写,不过因为比较简单写的也比较凌乱代码没有
+保留, 这次又碰到这个问题因此使用Python来写了一个特意完成AWS发现模式功能的简单脚
+本来生成``资源文件''.
+脚本默认遍历读取doc\_root目录下的文件,并生成一个content.hpp和content.cpp文件, 
+content.cpp里包含了资源内容, content.hpp提供\_RC函数的接口, 通过使用这个函数其他
+代码就可以方便的得到对应文件的字节码. 如获得index.htm文件和js/main.js文件就可以
+简单的分别调用\_RC(``/index.htm'')和\_RC(``/js/main.js'')带得到, 其中\_RC返回的
+是一个array<const char*, size\_t>, array是C++最新标版本提供的标准类型.第一个字段
+指向对应文件的字节码,后一个字段表示文件长度.
+
+脚本文件较为简单不到100行,主要是使用struct的unpack函数来进行解码.
+代码如下
+\begin{lstlisting}[language=Python]
+#!/usr/bin/python2
+import sys
+import os
+from struct import unpack
+
+content_hpp =  '\
+/*THIS FILE IS AUTO GENERATE BY AppWebServer Resource Builder*/\n\
+\n\
+#ifndef CONTENT_HPP_\n \
+#define CONTENT_HPP_\n\
+#include <utility>\n\
+#include <string>\n\
+std::pair<unsigned char*, size_t> _RC(std::string path);\n\
+#endif\n'
+
+content_cpp = '\
+/*THIS FILE IS AUTO GENERATE BY AppWebServer Resource Builder*/\n\
+\
+#include "content.hpp"\n\
+#include <string>\n\
+using namespace std;\n\
+typedef unsigned char uchar;\n\
+	std::pair<uchar*, size_t> _RC(std::string path){{\n\
+    static uchar* _rc_empty = 0;\n\
+    {0}\n\
+    return make_pair(_rc_empty, -1);\n\
+}}'
+content_static = 'static uchar {0}[] = {{\n {1} \n}};\n'
+content_return_first = '\
+if (path == "{0}") {{\n\
+    return make_pair({1}, {2});\n\
+}}'
+
+content_return = '\
+ else if (path == "{0}") {{\n\
+   return make_pair({1}, {2});\n\
+}}\n'
+
+contents = ["", ""]
+
+doc_root = "doc_root/"
+if len(sys.argv) == 2:
+    doc_root = sys.argv[1]
+
+def generate_one(name, path, template=content_return):
+    f = open(path, 'r')
+    data = f.read()
+    f.close()
+    if (len(data) == 0):
+        print "Waring: {0} is zero length file!".format(path)
+        c = template.format(path, "_rc_empty", 0)
+        return ["",c]
+
+    content = unpack("{0}c".format(len(data)), data)
+    tmp = ""
+    counter = 0
+    for i in content:
+        tmp += "0x{0:x}, ".format(ord(i))
+        counter += 1
+        if (counter % 10 == 0):
+            tmp += "\n\t\t"
+    s = content_static.format(name, tmp)
+    c = template.format(path[1:], name, len(content))
+    return [s,c]
+
+
+old_path= os.path.abspath('.')
+os.chdir(doc_root)
+
+counter = 0;
+for root, dirs, files in os.walk("."):
+    for file in files:
+        if (counter==0):
+            c = generate_one("_rc_{0}".format(counter),os.path.join(root, file), content_return_first)
+        else:
+            c = generate_one("_rc_{0}".format(counter),os.path.join(root, file))
+        contents[0] += c[0]
+        contents[1] += c[1]
+        counter += 1;
+
+os.chdir(old_path)
+
+f = open("content.cpp", "w")
+f.write(content_cpp.format(contents[0]+contents[1]));
+f.close()
+
+f = open("content.hpp", "w")
+f.write(content_hpp)
+f.close()
+\end{lstlisting}
+
+
+这里的解决方案是可以算作是一种很早就有的使用用代码生成代码的方式, QT的特定扩展,
+Google的Buffer Protocol都算是这类解决方案. 可以利用其他简单的工具辅助我们的工作.
+
+AWS通过这个脚本生成的content.hpp和content.cpp文件就能通过条件编译来选择是使用这
+里提供的数据还是直接读取文件系统下的目录. 
+这样设计之后在代码调式的时候可以直接更改WebPage的内容,而在最终发布的时候便可以仅
+仅给用户提供一个可执行文件.

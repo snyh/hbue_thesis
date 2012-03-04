@@ -6,6 +6,9 @@
 默认字体为Adobe的四套字体, linux下可以选择安装,
 如果是win系统则用"win"搜索data/hbue.cls文件去掉对应注释使用系统自带的字体.
 
+main.pdf是生成的文件, content内的文件是样章, 论文比较烂, 丟上来主要是给不
+太熟悉latex的朋友起一个借鉴作用.
+
 使用方式:
 1  make init; 以便建立初始化目录
 2  修改info.tex 内容为自己的信息

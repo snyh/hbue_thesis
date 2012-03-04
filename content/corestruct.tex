@@ -1,0 +1,200 @@
+\chapter{核心数据结构}
+由于UDP缺乏可靠性可能出现丢包、出错、复制等现象,
+并且缺乏拥塞控制机制(congestion control). 
+对于丢包、出错等现象对于需要绝对安全的文件传输来说是绝对不能允许的,
+对于大文件的传输如果没有拥塞控制则可能出现大量丢包(通过之前
+做本地回环实验丢包率可达到30\%,实际局域网不会这么高), 或者由于传输
+间隔过长导致效率急剧下降。
+
+因此必须设计特定结构来克服这些困难.
+
+
+\section{散列函数}
+散列函数(Hash Function)
+Hash Function可以从任何一种数据中创建较小的数字``指纹''，它可以把
+很大的数据量压缩成较小的固定位数的数字. 
+
+这里Hash代表系统的一个数据结构struct Hash;
+通过使用Hash结构来对某一事物进行唯一标示.
+准确的唯一标示应该使用UUID, 但UUID只是产生一个唯一标示符但不能和对
+应的事物产生关联.
+
+在表示文件时使用Hash进行唯一标示以免文件名相同但内容不同的文件出现.
+在传输数据的时候使用Hash对传输的数据块进行完整性验证以保证最终收到
+的文件不会有任何字节偏差(传输二进制文件必须保证的).
+
+最出名的Hash算法要属MD5, MD5常用来对用户密码进行加密(稍微安全一些
+的做法是加上salt).
+另外还有SHA-0,SHA-1,SHA-256,SHA-512更安全的算法也较为出名.
+
+考虑到计算量以及允许出现碰撞情况的出现, 这里没有选用上面这些较好的
+Hash算法, 而是使用计算量较低的MD4, 没有使用MD2的原因是MD2使用16位
+整型进行操作在32位或者64位CPU上不一定会带来速度的提升.
+
+源码中仅仅使用typedef将一个string作为Hash类型
+typedef std::string Hash;
+具体计算hash是通过
+Hash hash\_data(const char* data, size\_t size);
+函数调用crypto++库的md4函数进行计算.
+
+
+\section{文件的抽象表示}
+在有操作系统和文件系统的支持下我们可以方便的使用文件路径进行文件定位
+以及操作。
+而进行网络传输时则需要把文件的一些必备信息告诉对方
+这里涉及到文件大小,文件有多少块(一次发送整个文件是不理智的UDP协议也
+因为length字段仅仅16位所以一次最多只能传送大约64Kb的数据), 一块数据
+有多大, 文件名和真实路径, 文件类型等问题.
+
+这里先将系统使用的数据结构给出
+\begin{lstlisting}
+struct FInfo {
+	enum Type : uint8_t {
+		NormalFile, Directory, RootFile, RootDir 
+	} file_type;
+	enum Status { 
+		Local, Downloading, Remote 
+	} status;
+	Hash parent_hash;
+	Hash hash;
+	uint32_t chunknum;
+	uint16_t lastchunksize;
+	std::string path;
+}
+\end{lstlisting}
+enum Type 使用了c++11的新特性用来指定enum底层的数据类型(默认为int),
+因为C/C++的基本类型并非固定大小因此在进行网络传输时必须使用定长类型或者
+对变长类型进行特殊处理(path字段就是变长的).
+uintXX\_t在c++11中是作为标准类型出现的(定义在cstdint中).
+enum Status由于不需要在网络中进行传输仅仅是在本地进行状态变迁使用的,所以
+无须指定底层类型.
+
+FInfo可以通过info\_to\_net和info\_from\_net这一组函数在网络上进行传输.
+chunknum表示文件有多少块数据;
+普通文件块的长度是一个在config.hpp中定义的固定值(当前为60000)
+lastchunksize表示最后一块数据的长度(文件长度不会总能被60000整除).
+通过这2个变量和一个常量就可以计算出某个文件的大小以及文件块数.
+
+path在不同情况下意义稍有不同,在文件正在传输时path指向了操作系统中对应
+文件的真实路径(上传者和下载者一般是不同路径的). 刚通过网络接收后但还没
+开始进行下载时path仅仅保存了文件的名称以便用户大概知道文件的内容.
+由于path字段是变长大小因此在进行传输时需要进行特定处理, 这里使用的方式
+是用一个uint8\_t代表path长度,在进行传输和接收时自动处理. 因此path的长度
+固定在1~256之间, 超过这个长度系统会自动截断(优先保留后缀名).
+
+hash字段是通过对整个文件进行hashing得到的16位定长数据,可以很好的用来区别
+不同文件.
+
+status字段是用来表示当前文件状态的, 刚从网络接收到的FInfo都是Remote状态,
+开始下载后转换为Downloading状态, 下载完成后成为Local状态. 
+如果FInfo是本机制造的则为Local状态.
+
+以上几个字段就可以很好的处理普通文件传输了,但如果需要传输目录则需要进一般
+处理, 这里增加了file\_type和parent\_hash两个字段来完成.
+共有4种文件类型普通文件(NormalFile), 目录(Directory), 根文件(RootFile),
+根目录(RootDir), 其中RootFile和RootDir不需要parent\_hash这个字段(因此在进行
+实际传输时会根据文件类型来判断是否发送或接收parent\_hash).
+为了较容易理解这里举出一个例子:
+假如使用data作为路径来建立FInfo则会产生以下7个FInfo出来.
+\begin{verbatim}
+|-- data  				//RootFile
+|   |-- cover.tex   	//NormalFile  -> data.hash
+|   |-- hbue.cls		//NormalFile  -> data.hash
+|   |-- images			//Directory   -> data.hash
+|   |   |-- badge2.png 	//NormalFile  -> images.hash
+|   |   `-- badge.png 	//NormalFile  -> images.hash
+|   `-- report_imp.tex	//NormalFile  -> data.hash	
+其中->指向的是parent_hash
+\end{verbatim}
+这里仅仅是在进行普通文件传输的原基础之上改造了一个传输目录的方式,但
+并不建议使用目录传输方式(特别是这里设计的方式有大量冗余信息). 因为目录
+传输的缺点在于文件数量非常多的时候速度会急剧下降建议使用tar,rar,7z等能进行
+打包(非压缩)后传输.
+这种目录传输方式有一个好处是用户可以有选择的进行下载(仅仅下载目录中部分文件),
+并且FInfo不需要一次性传输,可以在打开RootDir的时候仅仅获取下一级的目录,这样就
+类似于ajax技术,在不影响用户体验的时候减少不必要的传输.
+
+
+\section{文件完整性和分块}
+如果传输的是视频、音频等文件丟几个字节没有很大关系,这也是使用UDP的主要原因,
+但很可惜本系统无法利用UDP的这些优点, 必须保证文件的完整.
+UDP会出现丢包、重复、乱序等问题.
+但都可以通过分块传输来解决.
+数据结构如下:
+\begin{lstlisting}
+struct Chunk {
+	Hash file_hash;
+	Hash chunk_hash;
+	uint32_t index;
+	uint16_t size;
+	const char* data;
+}
+\end{lstlisting}
+Chunk表示一个文件块;
+file\_hash表示此文件块所属文件;
+chunk\_hash是此文件块所携带数据的hash值;
+index表示此文件块在整个文件中的序号;
+size表示所携带数据长度;
+data在发送时携带size长的真实数据,在发送前仅仅指向数据地址.
+
+这里同样使用的都是定长类型,以便在不同操作系统下可以顺利完成通讯.
+其中chunk\_hash在发送前进行hashing,接收者在接收到一个文件块后如果通过
+计算发送所携带数据和chunk\_hash不符则直接丢弃.
+
+顺便说明这里能够表达的最大文件大小并非$2^{16}*2^{32}$一是因为实际大小
+和文件系统有关,二是在下面要介绍的数据结构Bill中也会有限制.
+
+\section{文件块的请求}
+因为是分块发送的,所以请求者无法直接发送一条类似GIVE\_ME\_FILE\_XXX这样
+的指令到网络然后就等着接收文件(因为UDP的丢包、重复、乱序等). 因此需要
+使用特定的结构来进行特定文件块的请求.
+这里使用Bill结构,示意代码如下:
+\begin{lstlisting}
+struct Bill {
+  Hash hash;
+  uint16_t region;
+  BlockType bits;
+};
+\end{lstlisting}
+hash表示请求的文件hash;
+region表示当前区域;
+bits表示此区域内的请求信息.
+
+BlockType在config.hpp中定义为typedef uint32\_t BlockType是一个32位无符号类型.
+bits中的某一位若为1表示需要此块文件若为0表示不需要.这里因为需要进行网络传输
+因此使用了uint32\_t结构,但实际操作时是转换为std::bitset<BLOCK\_LEN>类型来
+方便位操作. 
+由于这个结构只提供通讯的辅助信息但又是需要大量发送的,所以需要尽量高效的利用
+空间.在bits和region的类型选取上进行了一定考虑.
+BlockType不能太小否则会蜕化为一次请求一块的效果了.但也不能太大否则就成了一次
+这里选取region为16位可以表达65536个区域,
+每一个区域可以携带32块信息,每一个最多携带60000B数据(BLOCK\_SIZE)因此可以
+表达出$32 * 2^{16} * 60000 \approx 117.1875GB$ 大小的文件.
+整个Bill占用空间sizeof(Bill) = 16 + 16 + 32 刚好等于64, 在32位操作系统和64位
+操作系统下都已经是对齐的结构.
+
+\section{丢包率}
+本系统中由于Bill的数据量较小在局域网中不会造成太大影响.
+因此这里只考虑大量发送Chunk时的情况.
+TCP使用的拥塞控制算法有``慢启动''(slow start),``拥塞避免''(congestion
+avoidance),``快速重传''(fast retransmit)和``快速恢复''(fast recovery)
+具体见TCP/IP详解.
+TCP的这些算法很多是面向环境恶劣的Internet网络, 而这篇论文所讨论的系统
+只需要处理合理控制好发送间隔就能很好的处理问题.
+
+处理方法仅仅是根据一个interval(int类型)的值来在发送chunk的时候进行一定
+时间的延迟, 这个值的计算是通过整个网络的丢包率进行动态计算的大小在0$\sim$32
+之间,
+\[\textrm{丢包率}:\omega = \frac{interval}{32.0} * 100\%\]
+\[\textrm{间隔时间}:i = \omega * 40ms\]
+这里选用40ms作为最大值是通过粗略估计算的出\\
+设M为网卡带最大带宽,单位byte/s,\\
+则在满带宽情况下计算出每1byte需要使用的时间$s = \frac{1000}{M}$单位ms\\
+然后计算出发送一块文件块的时间 $t = s * 60000$
+采用典型的网卡设备100Mbps和1Gbps分别计算得出4.6ms和0.46ms的结果,
+在用同样的方式计算硬盘读取的速度(假设30Mb/s读取速度)算出读取一块数据
+需要2ms即使再加上CPU处理时间一块数据的处理时间不会超过10ms. 
+实际代码中接收端是通过多线程写入数据只要收到数据后可以忽略写入时间.
+因此40ms在局域网已经是非常保守的值了, 初始状态interval的值是0.
+具体如何计算interval需要设计到其他结构因此在下一章
+的``速度统计与丢包率''中进行介绍.
