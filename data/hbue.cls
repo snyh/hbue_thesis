@@ -9,17 +9,17 @@
 %left=3.0cm包括装订线的0.5cm
 \RequirePackage[left=3.0cm, right=2.5cm, top=3cm, bottom=2.5cm]{geometry}
 
-\RequirePackage[slantfont,boldfont,CJKnumber,CJKchecksingle]{xeCJK} %中文支持
+\RequirePackage[boldfont,CJKnumber,CJKchecksingle]{xeCJK} %中文支持
 \XeTeXlinebreaklocale ``zh'' %针对中文断行
 \XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt %自动断行允许范围
 \punctstyle{kaiming} %标点符号方式
 \defaultfontfeatures{Mapping=tex-text}
 \RequirePackage{fancyhdr} %页眉页脚
 \RequirePackage{titletoc} %修改目录样式需要
-\RequirePackage{titlesec}
+\RequirePackage{titlesec} %修改章节样式
+\RequirePackage{caption2} %修改表，图标题需要使用
 \RequirePackage[colorlinks, linkcolor=black]{hyperref} %增加超级链接功能
 \RequirePackage{longtable} %开题报告需要使用这个作表
-\RequirePackage{fontspec, xunicode}
 \RequirePackage{fix-cm} %如果不启用则cmr等字体不能自动缩放.
 \RequirePackage{lmodern} %同上, 似乎是解决Latin Modern字体的缩放问题
 %\RequirePackage{calc}
@@ -29,9 +29,8 @@
 %\RequirePackage{graphpap}
 %\RequirePackage{tabularx}
 
-%硬性要求正文行距1.5倍, 暂时不清楚以下2条命令使用哪一条.
+%硬性要求正文行距1.5倍
 \linespread{1.5} 
-\renewcommand{\baselinestretch}{1.5}
 
 %pt到字号的映射参考http://wiki.ctex.org/index.php/LaTeX/%E5%B0%BA%E5%AF%B8
 \DeclareRobustCommand{\chuhao}{\fontsize{42pt}{\baselineskip}\selectfont}
@@ -51,11 +50,17 @@
 \DeclareRobustCommand{\qihao}{\fontsize{5.5pt}{\baselineskip}\selectfont}
 \DeclareRobustCommand{\bahao}{\fontsize{5pt}{\baselineskip}\selectfont}
 
+\renewcommand{\normalsize}{\xiaosi}
+
+\sloppy %降低断行标准, 中文似乎很难断行不设置这个经常出现overfull
+
 
 %字体映射,需要根据自己系统中有的字体进行修改,使用fc-list查看现有字体
 
 %中文字体
-\setCJKmainfont{Adobe Song Std}
+\setCJKmainfont[BoldFont={Adobe Heiti Std}, ItalicFont={Adobe Kaiti Std}]%
+	{Adobe Song Std}
+\setCJKmonofont{Adobe Kaiti Std}
 \setCJKsansfont{Adobe Fangsong Std}
 %英文字体
 \setmainfont{URW Bookman L}
@@ -80,6 +85,7 @@
 %设置页眉页脚
 %字体和大小为硬性要求宋体小五, 页眉居中页脚靠右
 \renewcommand{\headrulewidth}{0.5pt} %页眉线厚度
+\setlength{\headheight}{15pt} %设置页眉高度,尽量小一点.
 \fancypagestyle{plain}{%不重新设置一般则在章节开头没有页眉
 \fancyhf{}
 \fancyhead[C]{\xiaowu\songti 湖北经济学院本科毕业设计\-(论文)}
@@ -111,9 +117,16 @@
 
 %要求章居中(下面的centering)
 %节,子节左2空对齐(默认就是这种)
-\titleformat{\chapter}[display]
-  {\normalfont\Large\bfseries\centering}
-  {第 \thechapter 章}{0pt}{\Huge}
+\titleformat{\chapter}[display]%
+	{\normalfont\Large\bfseries\centering}%
+	{第 \thechapter 章}{0pt}{\Huge}%
+%
+
+\renewcommand{\bibname}{参考文献}
+\renewcommand{\figurename}{图}
+\renewcommand{\tablename}{表}
+\renewcommand{\captionlabeldelim}{} %序号之后接空格和标题
+\renewcommand{\captionlabelsep}{\hspace{1em}} %空一格
 
 
 %以下为自定义命令处理封面和开题报告的,与版式无关可以不关注
@@ -176,4 +189,3 @@
 \DeclareRobustCommand{\reportsuggestion}[1]{%
 \renewcommand{\sreportsuggestion}{#1}%
 }
-
