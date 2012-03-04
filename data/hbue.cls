@@ -8,8 +8,6 @@
 \XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt %自动断行允许范围
 \punctstyle{kaiming} %标点符号方式
 \defaultfontfeatures{Mapping=tex-text}
-\RequirePackage{zhspacing}
-\zhspacing %使用中文标点
 \RequirePackage{fancyhdr} %页眉页脚
 \RequirePackage{titletoc} %修改目录样式需要
 \RequirePackage[colorlinks, linkcolor=black]{hyperref} %增加超级链接功能

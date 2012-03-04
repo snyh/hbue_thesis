@@ -5,7 +5,7 @@ report: report.tex
 	xelatex -output-directory=./.tmp report
 
 clean: 
-	rm  ./.tmp/*
 	rm ./.tmp/content/*
+	rm  ./.tmp/*
 
 
