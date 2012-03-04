@@ -1,5 +1,6 @@
 \documentclass{data/hbue}
 
+%在这里添加需要使用的宏包
 \usepackage{hyphenat}
 \usepackage{amsmath}
 \usepackage{listings}
@@ -37,14 +38,15 @@ keywordstyle=\color{blue},
 \tableofcontents
 
 \mainmatter
-\addcontentsline{toc}{chapter}{前言}
-\addcontentsline{toc}{chapter}{摘要}
 
+%以下为具体章节文件.
 %\include{content/abstract}
+%\addcontentsline{toc}{chapter}{摘要}  %手动添加目录项
 %\include{content/introduce}
-\include{content/envirment}
+%\addcontentsline{toc}{chapter}{前言}
+%\include{content/envirment}
 %\include{content/corestruct}
-\include{content/sendrecv}
+%\include{content/sendrecv}
 %\include{content/coreother}
 %\include{content/gui}
 %\include{content/frontend}
