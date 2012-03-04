@@ -2,3 +2,30 @@
 在网上没有找到学校的latex模板故此自己制作了一份，
 因为还没开始写论文，具体格式还没有仔细调整，但整体框架
 已经搭建完成。
+
+目录结构
+.
+|-- figure //存放图表的目录，可自由安排
+|   `-- filemanger.eps
+|-- content    //论文正文，这里面的内容是用户需要撰写的正文
+|   |-- abstract.aux
+|   |-- abstract.tex
+|   |-- filemanager.aux
+|   |-- filemanager.tex
+|   |-- filespec.tex
+|   |-- introduce.aux
+|   |-- introduce.tex
+|   |-- protocol.tex
+|   `-- workaround.tex
+|-- data   //模板数据不需要更改
+|   |-- cover.tex  //封面
+|   |-- hbue.cls //模板文件
+|   |-- images
+|   |   |-- badge2.png
+|   |   `-- badge.png
+|   `-- report_imp.tex //开题报告模板
+|-- info.tex //在这里提供个人信息导师信息等。
+|-- main.tex //主文件，用来链接各部分
+|-- Makefile //方便编译
+|-- report.tex //开题报告、文献综述
+`-- README

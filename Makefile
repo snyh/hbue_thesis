@@ -6,5 +6,6 @@ report: report.tex
 
 clean: 
 	rm  ./.tmp/*
+	rm ./.tmp/content/*
 
 

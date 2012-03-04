@@ -1,7 +1,29 @@
 \documentclass{data/hbue}
 
 \usepackage{hyphenat}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{textcomp}
+\usepackage{xcolor}
+
 \begin{document}
+
+\lstset{%代码显示全局设置
+basicstyle=\ttfamily\normalsize,
+language=C++,
+numbersep=5pt,
+tabsize=2,
+numbers=left,
+stepnumber=1,
+breaklines=true,
+showtabs=false,
+frame=shadowbox,
+escapeinside=``, %中文逃逸
+aboveskip=1em,
+xleftmargin=1em,
+xrightmargin=1em,
+keywordstyle=\color{blue},
+}
 
 %读取封面信息
 \input{info}
@@ -9,24 +31,34 @@
 %生成封面
 \input{data/cover}
 
-%摘要
-\include{abstract}
+\frontmatter
 
 %生成目录
 \tableofcontents
 
-\pagestyle{fancy}
-\include{introduce}
-\include{filemanager}
-\include{filespec}
-\include{protocol}
+\mainmatter
+\addcontentsline{toc}{chapter}{前言}
+\addcontentsline{toc}{chapter}{摘要}
 
+%\include{content/abstract}
+%\include{content/introduce}
+\include{content/envirment}
+%\include{content/corestruct}
+\include{content/sendrecv}
+%\include{content/coreother}
+%\include{content/gui}
+%\include{content/frontend}
+%\include{content/test}
+
+\backmatter
+
+%开始附录
 
 %参考文献
 \begin{thebibliography}{99}
 	\bibitem{UDT}
-		A.   Nonymous et al.  \ 2005, 123, 456\\[-20pt]
+		(Test) A.   Nonymous et al.  \ 2005, 123, 456\\[-20pt]
 	\bibitem{oe04}
-		A.  N.   Other \& S.  O.  M.   Ebody 2004,  123, 456\\[-20pt]
+		(Test) A.  N.   Other \& S.  O.  M.   Ebody 2004,  123, 456\\[-20pt]
 \end{thebibliography}
 \end{document}

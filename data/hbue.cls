@@ -1,33 +1,34 @@
 %%
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{hbue}[2012/01/10]
-\LoadClass[a4paper,12pt,twoside,titlepage,openany]{report}
+\LoadClass[a4paper,oneside,titlepage]{book}
 \RequirePackage[left=2.5cm, right=2.5cm, top=3cm, bottom=2.5cm]{geometry}
-
-\RequirePackage{fancyhdr}
-\pagestyle{fancy}
-
-\RequirePackage{url}
-\RequirePackage{float}
-\RequirePackage{calc}
-\RequirePackage{graphicx}
-\RequirePackage{setspace}
-\RequirePackage{graphpap}
-\RequirePackage{hyperref}
-\RequirePackage{fontspec, xunicode}
-\RequirePackage[slantfont,boldfont]{xeCJK}
+\RequirePackage[slantfont,boldfont,CJKnumber,CJKchecksingle]{xeCJK} %中文支持
+\XeTeXlinebreaklocale ``zh'' %针对中文断行
+\XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt %自动断行允许范围
+\punctstyle{kaiming} %标点符号方式
+\defaultfontfeatures{Mapping=tex-text}
 \RequirePackage{zhspacing}
-\zhspacing
-\RequirePackage{longtable}
-\RequirePackage{tabularx}
-\RequirePackage{fix-cm}
-\setCJKmainfont{SimSun}
-\setCJKsansfont{SimHei}
-\setCJKmonofont{SimSun}
+\zhspacing %使用中文标点
+\RequirePackage{fancyhdr} %页眉页脚
+\RequirePackage{titletoc} %修改目录样式需要
+\RequirePackage[colorlinks, linkcolor=black]{hyperref} %增加超级链接功能
+\RequirePackage{longtable} %开题报告需要使用这个作表
+\RequirePackage{fontspec, xunicode}
+%\RequirePackage{calc}
+%\RequirePackage{float}
+%\RequirePackage{graphicx}
+%\RequirePackage{setspace}
+%\RequirePackage{graphpap}
+%\RequirePackage{tabularx}
+%\RequirePackage{fix-cm}
 
-
+%硬性要求正文行距1.5倍
+\linespread{1.5}
 \renewcommand{\baselinestretch}{1.5}
 \renewcommand{\arraystretch}{0.6}
+
+%pt到字号的映射参考http://wiki.ctex.org/index.php/LaTeX/%E5%B0%BA%E5%AF%B8
 \DeclareRobustCommand{\chuhao}{\fontsize{42pt}{\baselineskip}\selectfont}
 \DeclareRobustCommand{\xiaochu}{\fontsize{36pt}{\baselineskip}\selectfont}
 \DeclareRobustCommand{\yihao}{\fontsize{26pt}{\baselineskip}\selectfont}
@@ -44,25 +45,66 @@
 \DeclareRobustCommand{\xiaoliu}{\fontsize{6.5pt}{\baselineskip}\selectfont}
 \DeclareRobustCommand{\qihao}{\fontsize{5.5pt}{\baselineskip}\selectfont}
 \DeclareRobustCommand{\bahao}{\fontsize{5pt}{\baselineskip}\selectfont}
-\setCJKfamilyfont{FangSong}{FangSong_GB2312}
-\setCJKfamilyfont{HeiTi}{SimHei}
-\setCJKfamilyfont{KaiShu}{KaiTi_GB2312}
-\setCJKfamilyfont{LiShu}{LiSu}
-\setCJKfamilyfont{SongTi}{SimSun}
-\setCJKfamilyfont{YouYuan}{YouYuan}
-\setCJKfamilyfont{STFangsong}{FangSong_GB2312}
-\setCJKfamilyfont{STXingkai}{KaiTi_GB2312}
-\DeclareRobustCommand{\fangsong}{\CJKfamily{FangSong}}
-\DeclareRobustCommand{\stfangsong}{\CJKfamily{STFangsong}}
-\DeclareRobustCommand{\stxingkai}{\CJKfamily{STXingkai}}
+
+
+%中文字体
+\setCJKmainfont{Adobe Song Std}
+\setCJKsansfont{Adobe Fangsong Std}
+%英文字体
+\setmainfont{URW Bookman L}
+\setromanfont{URW Palladio L}
+
+%常用字体映射,需要根据系统中有的字体进行修改,使用fc-list查看
+%微软字体, win下可使用这组字体
+%\setCJKfamilyfont{HeiTi}{SimHei}
+%\setCJKfamilyfont{SongTi}{SimSun}
+%\setCJKfamilyfont{KaiTi}{SimKai}
+
+%为字体选择创建简单的命令
+\setCJKfamilyfont{HeiTi}{Adobe Heiti Std}
+\setCJKfamilyfont{SongTi}{Adobe Song Std}
+\setCJKfamilyfont{FangSong}{Adobe Fangsong Std}
+\setCJKfamilyfont{KaiTi}{Adobe Kaiti Std}
 \DeclareRobustCommand{\heiti}{\CJKfamily{HeiTi}}
-\DeclareRobustCommand{\kaiti}{\CJKfamily{KaiShu}}
-\DeclareRobustCommand{\lishu}{\CJKfamily{LiShu}}
+\DeclareRobustCommand{\kaiti}{\CJKfamily{KaiTi}}
 \DeclareRobustCommand{\songti}{\CJKfamily{SongTi}}
-\DeclareRobustCommand{\youti}{\CJKfamily{YouYuan}}
+\DeclareRobustCommand{\fangsong}{\CJKfamily{FangSong}}
 
 
+%设置页眉页脚
+%字体和大小为硬性要求宋体小五, 页眉居中页脚靠右
+\renewcommand{\headrulewidth}{0.5pt}
+\fancypagestyle{plain}{%不重新设置一般则在章节开头没有页眉
+\fancyhf{}
+\fancyhead[C]{\xiaowu\songti 湖北经济学院本科毕业设计\-(论文)}
+\fancyfoot[R]{\xiaowu\thepage}
+}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\xiaowu\songti 湖北经济学院本科毕业设计\-(论文)}
+\fancyfoot[R]{\xiaowu\thepage}
 
+
+%设置目录样式
+% 只排版到二级标题,即章和节
+% ``目录''二字使用小三号黑体居中排版
+% 目录标题左边顶格排版,页号使用大写罗马数字标注,右顶格排版
+
+%具体命令可以参加report.cls里的定义
+\renewcommand{\contentsname}{\xiaosan\heiti\centerline{目\quad 录}} 
+\setcounter{tocdepth}{1}  %目录面只排版到二级标题即章和节,硬性要求
+
+%目录顶格
+%修改默认名加上 第xx章
+\titlecontents{chapter}[0em]{\addvspace{5pt}\filright}%
+{第\thecontentslabel 章\hspace{1em}}{}{\titlerule*[8pt]{.}\contentspage}
+
+\titlecontents{section}[1em]{}%
+{\contentspush{\thecontentslabel\quad}}%
+{}{\quad\titlerule*[8pt]{.}\contentspage}
+
+
+%一些自定义命令处理封面和开题报告的
 \DeclareRobustCommand{\stitle}{}
 \DeclareRobustCommand{\hbuetitle}[1]{%
 \renewcommand{\stitle}{#1}%
@@ -124,23 +166,3 @@
 }
 
 \newcommand{\ul}{\underline}
-
-
-
-\pagestyle{fancy}
-\fancyhf{}
-\renewcommand{\headrulewidth}{0.5pt}
-% 不管单面双面，页眉始终是那个样子
-\fancypagestyle{plain}{
-  \fancyhf{}
-  \fancyhead[C]{\xiaowu\songti 湖北经济学院本科毕业设计\-(论文)}
-  \fancyfoot[R]{\xiaowu\thepage}
-}
-
-\renewcommand{\contentsname}{\centerline{目\quad 录}}
-\renewcommand{\listfigurename}{\centerline{图~目~录}}
-\renewcommand{\listtablename}{\centerline{表~目~录}}
-\setcounter{tocdepth}{1}  % 设置目录的深度到 subsection
-\renewcommand{\bibname}{参~考~文~献}
-\renewcommand{\figurename}{图} % 插图题头
-\renewcommand{\tablename}{表} % 插表题头
