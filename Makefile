@@ -8,4 +8,8 @@ clean:
 	rm ./.tmp/content/*
 	rm  ./.tmp/*
 
-
+init:
+	mkdir content
+	mkdir figure
+	mkdir ./.tmp
+	mkdir ./.tmp/content
