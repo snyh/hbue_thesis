@@ -1,9 +1,8 @@
 main: main
-	xelatex -output-directory=./.tmp main
-	cp ./.tmp/main.pdf .
+	xelatex -shell-escape -8bit main
+
 report: report.tex
-	xelatex -output-directory=./.tmp report
-	cp ./.tmp/report.pdf .
+	xelatex  report
 
 clean: 
 	rm ./.tmp/content/*

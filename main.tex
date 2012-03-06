@@ -3,28 +3,15 @@
 %在这里添加需要使用的宏包
 \usepackage{hyphenat}
 \usepackage{amsmath}
-\usepackage{listings}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{minted}
 
 \begin{document}
 
-\lstset{%代码显示全局设置
-basicstyle=\small,
-language=C++,
-numbersep=5pt,
-tabsize=2,
-numbers=left,
-stepnumber=1,
-breaklines=true,
-showtabs=false,
-frame=shadowbox,
-escapeinside=``, %中文逃逸
-aboveskip=1em,
-xleftmargin=1em,
-xrightmargin=1em,
-keywordstyle=\color{blue},
-}
+\newminted{cpp}{linenos, numbersep=5pt, frame=lines, framesep=2mm}
+\newminted{python}{linenos, numbersep=5pt, frame=lines, framesep=2mm}
+\newminted{javascript}{linenos, numbersep=5pt, frame=lines, framesep=2mm}
 
 %读取封面信息
 \input{info}
@@ -40,7 +27,6 @@ keywordstyle=\color{blue},
 \mainmatter
 
 %以下为具体章节文件.
-\addcontentsline{toc}{chapter}{摘要}  %手动添加目录项
 \include{content/abstract}
 \include{content/introduce}
 \include{content/envirment}
@@ -50,20 +36,50 @@ keywordstyle=\color{blue},
 \include{content/gui}
 \include{content/frontend}
 \include{content/test}
-
-\addcontentsline{toc}{chapter}{结束语}
+\include{content/thanks}
 
 \backmatter
 
 %参考文献
 \bibliographystyle{plain}
 \addcontentsline{toc}{chapter}{附录及参考文献}
-
 \begin{thebibliography}{99}
-	\bibitem{UDT}
-		(Test) A.   Nonymous et al.  \ 2005, 123, 456
-	\bibitem{oe04}
-		(Test) A.  N.   Other \& S.  O.  M.   Ebody 2004,  123, 456
+	\bibitem{UDP} 
+		RFC 768, User Datagram Protocol[S].
+	\bibitem{TCP}
+		RFC 793, Transmission Control Protocol[S].
+	\bibitem{json}
+		RFC 4627, The application/json Media Type for JavaScript Object
+		Notation (JSON)[S].
+	\bibitem{cmake}
+		Andrej Cedilnik, HOWTO: Cross-Platform Software Development Using CMake
+		，2003-10
+	\bibitem{jquery}
+		jQuery社区专家, jQuery Cookbook, 东南大学出版社, 2010-10
+	\bibitem{cpp11}
+		Bjarne Stroustrup, C++11 -the recently approved new ISO C++ standard,\\
+		\url{http://www2.research.att.com/~bs/C++0xFAQ.html}
+	\bibitem{TCP/IP}
+		W.Richard Stevens, TCP/IP 详解 卷1, 机械工业出版社, 2000-4
+	\bibitem{thecpp}
+		Bjarne Stroustrup, C++程序设计语言, 机械工业出版社, 2002-1
+	\bibitem{webdesign}
+		Zoe Mickley Gillenwater, 灵活Web设计, 机械工业出版社, 2009
+	\bibitem{hash}
+		Wikipedia, Hash Function, \url{http://en.wikipedia.org/wiki/Hash\_function}
+	\bibitem{vim}
+		Steve Oualline, Vi iMproved(VIM), Sams, 2001-4
+	\bibitem{css}
+		Christopher Schmitt, CSS Cookbook, O'Reilly Media, 2004-8
+	\bibitem{less}
+		Alexis Sellier, The Dynamic Stylesheet language, \url{http://www.lesscss.net}
+	\bibitem{python}
+		Mark Lutz, Python编程(第三版英文$\cdot$影印版), 东南大学出版社, 2006
+	\bibitem{progit}
+		Scott Chacon, Pro Git, Apress, 2009-8
+	\bibitem{boost}
+		Boost Community, Boost Library Documentation,
+		\url{http://www.boost.org/doc/libs}
 \end{thebibliography}
 
 \end{document}

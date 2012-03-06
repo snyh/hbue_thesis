@@ -1,9 +1,20 @@
 \chapter*{摘要}
+\addcontentsline{toc}{chapter}{中文摘要}  %手动添加目录项
 
-本文通过设计并实现了一款局域网内的并发传输工具,
+本文设计并实现了一款局域网内的并发传输工具,
 可以有效解决同一文件多次传输时的重复发送问题.
-以此工具的实现过程介绍了linux下软件开发的常用方式,
+并以此工具的实现过程介绍了linux下软件开发的常用方式,
 利用C++11的新特性使代码更加简洁, 使用python等脚本语言
 的优势进行代码生成和测试. 
 
-\noindent\textbf{关键字:} WEB UDP Linux C++11 git Python CMake
+整个软件的开发过程充分利用开源优势,
+系统开发与前期测试在linux下进行,主要使用c++进行核心部分的编写,使用python进行
+测试以及一些辅助开发, 使用js/css完成软件页面设计. 在设计时候前端后端有明显
+分界. 整个软件的代码和论文文档均使用git进行版本管理,使用cmake进行项目管理.
+
+\noindent\textbf{关键字:} WEB UDP Linux C++11 GIT Python CMake
+
+\chapter*{Abstraction}
+\addcontentsline{toc}{chapter}{英文摘要}  %手动添加目录项
+This paper desgin and write an tool to Transfer file in LAN.
+\ldots

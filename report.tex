@@ -1,4 +1,16 @@
 \documentclass{data/hbue}
+\usepackage{url}
+\usepackage{tikzpagenodes}
+\usetikzlibrary{calc}
+\newcommand{\measureremainder}[1]{%
+\begin{tikzpicture}[overlay, remember picture]
+	% Measure distance to right text border
+	\path let \p0 = (0, 0), \p1 = (current page text area.south) in
+	[/utils/exec={\pgfmathsetlength#1{\y0-\y1}\global#1=#1}];
+\end{tikzpicture}%
+}
+\newlength{\whatsbelow}
+
 \begin{document}
 
 %导入基本信息
@@ -14,12 +26,12 @@
 	\item{题目来源:} 
 
 		在校期间曾多次遇到教师上课时需要发送一些文件给学生安装以便更好的进行
-		教学安排,但在文件较大时局域网即使处在满负荷之下也无法满足人数众多的
-		学生同时下载.
+		教学安排，但在文件较大时局域网即使处在满负荷之下也无法满足人数众多的
+		学生同时下载。
 
-		因此萌生使用UDP的广播特性来进行文件传输这一想法.
-		考虑到操作系统的多样化以及自己一直是在linux环境下成长的,因此跨平台是
-		这款软件的一个必备要求.
+		因此萌生使用UDP的广播特性来进行文件传输这一想法。
+		考虑到操作系统的多样化以及自己一直是在linux环境下成长的，因此跨平台是
+		这款软件的一个必备要求。
 
 	\item{意义:}
 
@@ -29,15 +41,17 @@
 		拥有linux版本。而且手机、平板这些便携式电脑已经越来越流行，软件平台早
 		已不再局限在Windows上。 也不会局限在某一特定事物之上。
 
-		跨平台不仅仅意味着能在多个系统上运行,同时促使软件开发人员在开发软件时
-		尽量不用操作系统特性而是使用更具抽象性的工具如C++的boost库.这样能更好
-		的进行抽象设计,而不用过早陷入细节问题.
+		跨平台不仅仅意味着能在多个系统上运行，同时促使软件开发人员在开发软件时
+		尽量不用操作系统特性而是使用更具抽象性的工具如C++的boost库。这样能更好
+		的进行抽象设计，而不用过早陷入细节问题。
 
-		UDP本身是不适合进行大文件传输的特别是在互联网上, 但合理使用广播或多播
-		这种利用以太网本身的传输机制进行合理的利用带宽, 就可以让这种并发传输
-		的情况下非常明显的``突破''网络物理限制. 
-		可以节约宝贵的时间,特别是在课堂上.
-		
+		UDP本身是不适合进行大文件传输的特别是在互联网上，但合理使用广播或多播
+		这种利用以太网本身的传输机制进行合理的利用带宽，就可以让这种并发传输
+		的情况下非常明显的``突破''网络物理限制。
+		可以节约宝贵的时间，特别是在课堂上。
+
+		通过研究和实现本课题可以很好的锻炼自己在设计与编码上的能力。
+
 \end{description}
 }
 
@@ -45,81 +59,134 @@
 \reportdescription
 {
 \begin{description}
-	\item{国内情况:}
+	\item{国内外情况:}
 
-		随着网络基础设施的逐渐完善，下载文件已经是非常普遍的需求,
+		随着网络基础设施的逐渐完善，下载文件已经是非常普遍的需求，
 		国内有名的下载软件有早期的快车，最近几年流行的迅雷以及腾讯的旋风。
 		局域网内下载软件由于应用较少却因此少有特别出名的，
 		国外比较有名的局域网传输软件有日本的飞鸽传输和美国的
 		HFS(Http File Server)。
 
-	\item{国外情况:}
-
-		在中国高校一般都是通过架设FTP,飞鸽传书,QQ以及Windows自带的网络
-		邻居来下载.其中FTP方式和Windows网络邻居在传输大量小文件时准备时
-		间过长而且这两种方式都需要一定的配置才能运行.QQ方式需要有外网连
-		接,而且有时会出现判断错误导致文件通过外网进行传输.飞鸽传书在局
-		域网内利用UDP进行文件传输速度非常快, 但还是无法解决文件的并发传
-		输.同样利用广播进行文件传输的有网络模式下的ghost,可以在局域网内
-		进行批量按照系统. 
-
+		在高校一般都通过架设FTP，飞鸽传书，QQ以及Windows自带的网络
+		邻居来下载。其中FTP方式和Windows网络邻居在传输大量小文件时准备时
+		间过长而且这两种方式都需要一定的配置才能运行。QQ方式需要有外网连
+		接，而且有时会出现判断错误导致文件通过外网进行传输。飞鸽传书在局
+		域网内利用UDP进行文件传输速度非常快，但还是无法解决文件的并发传
+		输。同样利用广播进行文件传输的有网络模式下的ghost，可以在局域网内
+		进行批量按照系统。
 \end{description}
 }
 
 %三、主要研究内容  
 \reportcontent
 {
-在linux下(同样适应与windows、Mac、Unix等)进行软件开发的相关事宜。
-使用开源工具构建整个工具。
-\begin{itemize}
-	\item 涉及到用Umbrello进行UML设计，Dia绘制其他示意图。
-	\item 涉及到用vim编写程序，latex编写文档。
-	\item 涉及到用CMake进行自动编译，用git管理项目。
-	\item 涉及到用Inkscape制作矢量图形提高程序界面的友好度。
-	\item 涉及到用GCC进行跨平台交叉编译。
-	\item 涉及到用VirtualBox测试windows平台运行效果。
-	\item 涉及到用python编写测试脚本, 生成特定代码.
-\end{itemize}
+\begin{description}
+	\item{主要内容}
 
-对于工具本身需要重点设计的有
-\begin{itemize}
-	\item 文件管理
+		本文主要探讨了如何在linux下设计并实现一款跨平台的通用文件并发传输
+		软件LFShare。其他主要涉及到在在linux下进行软件开发的相关事宜。
+		如何使用开源工具构建整个系统的开发和设计，其中设计到的一些工具和方法
+		有:
 		\begin{itemize}
-			\item 文件按照什么规则进行分块以便传输。
-			\item 文件如何进行完整性检验。
-			\item 文件信息如何组织以便其他节点知晓。
-			\item 文件的重组。
+			\item 用Umbrello进行UML设计，Dia绘制其他示意图。
+			\item 用vim编写程序，latex编写文档。
+			\item 用CMake进行自动编译，用git管理项目。
+			\item 用Inkscape制作矢量图形提高程序界面的友好度。
+			\item 用GCC进行跨平台交叉编译。
+			\item 用VirtualBox测试windows平台运行效果。
+			\item 用python编写测试脚本，生成特定代码。
 		\end{itemize}
-	\item 传输方面
+		在软件设计方面主要探讨了:
 		\begin{itemize}
-			\item 如何发现网络内其他用户。
-			\item 如何控制传输速度防止过多的丢包。
-			\item 如何在丢包发生后启动重传机制。
-			\item 如何在
+			\item 文件管理
+				\begin{itemize}
+					\item 文件按照什么规则进行分块以便传输。
+					\item 文件如何进行完整性检验。
+					\item 文件信息如何组织以便其他节点知晓。
+					\item 文件的重组。
+				\end{itemize}
+			\item 传输方面
+				\begin{itemize}
+					\item 如何发现网络内其他用户。
+					\item 如何控制传输速度防止过多的丢包。
+					\item 如何在丢包发生后启动重传机制。
+					\item 如何在
+				\end{itemize}
+			\item GUI方式的选择和实现
 		\end{itemize}
-	\item 众多GUI库该如何选取.
-\end{itemize}
-
+		其中最重要的是文件传输的设计。
+\end{description}
 }
 
 %四、本研究的关键创新点，研究方法、研究进度计划和完成时间 
 \reportschedule
 {
-本文通过一个实例---局域网内并发传输来介绍开源界里的一些工作方式
+\begin{description}
+	\item{研究方法:}
 
-研究方法尽量勇于尝新,以便更好的达到学习效果.
-比如在可以的情况下尽量使用编译器还无法完全支持的新标准C++11的一些
-新特性来使代码结构更加简单更少的依赖第三方块。
-在GUI的选型上也不没有选择自己熟悉的一些库,而是将整个界面构建在WEB
-界面之上.
+		本文在探讨设计UDP并发传输的同时根据自身实践介绍开源界里的一些工作方式。
+		研究方法尽量勇于尝新，以便更好的达到学习效果。
+		比如在可以的情况下尽量使用编译器还无法完全支持的新标准C++11的一些
+		新特性来使代码结构更加简单更少的依赖第三方块。
+		在GUI的选型上也没有选择自己熟悉的一些库，而是将整个界面构建在WEB
+		界面之上。
+	\item{进度计划和完成时间:}
 
-\{研究进度计划和完成时间\}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			\multicolumn{3}{|c|}{\sanhao 论文进度安排} \\ 
+			\hline
+			序号 & 论文\-(设计)工作任务 & 日期\-(起止周数) \\
+			\hline
+			1	& 查阅相关资料，市场调用，准备开题 & 2012年11月25日-12月28日 \\
+			\hline
+			2	& 系统设计，编写程序 & 2012年1月3日-2月28日 \\
+			\hline
+			3	& 论文书写，完成初稿 & 2012年3月4日-12月31日 \\
+			\hline
+			4	& 反复修改论文，完成定稿 & 2012年5月1日-5月20日 \\
+			\hline
+			5	& 论文答辩，成绩评定，归档 & 2012年5月21日-6月 \\
+			\hline
+		\end{tabular}
+
+\end{description}
 }
 
 %五、主要参考文献
 \reportreference
 {
-\{参考文献\}
+[1] RFC 768，User Datagram Protocol[S]。
+
+[2] RFC 793，Transmission Control Protocol[S]。
+
+[3] RFC 4627，The application/json Media Type for JavaScript Object
+	Notation (JSON)[S]。
+[4] Andrej Cedilnik，HOWTO: Cross-Platform Software Development
+Using CMake，2003-10
+
+[5] jQuery社区专家，jQuery Cookbook，东南大学出版社，2010-10
+
+[6] Bjarne Stroustrup，C++11 -the recently approved new ISO C++ standard，
+\url{http://www2。research。att。com/~bs/C++0xFAQ。html}
+
+[7] W。Richard Stevens，TCP/IP 详解 卷1，机械工业出版社，2000-4
+
+[8] Bjarne Stroustrup，C++程序设计语言，机械工业出版社，2002-1
+
+[9] Zoe Mickley Gillenwater，灵活Web设计，机械工业出版社，2009
+
+[10] Steve Oualline，Vi iMproved(VIM)，Sams，2001-4
+
+[11] Christopher Schmitt，CSS Cookbook，O'Reilly Media，2004-8
+
+[12] Alexis Sellier，The Dynamic Stylesheet language，\url{http://www。lesscss。net}
+
+[13] Mark Lutz，Python编程(第三版英文$\cdot$影印版)，东南大学出版社，2006
+
+[14] Scott Chacon，Pro Git，Apress，2009-8
+
+[15] Boost Community，Boost Library Documentation，\url{http://www。boost。org/doc/libs}
 }
 
 %六、指导老师意见

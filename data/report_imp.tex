@@ -1,8 +1,8 @@
 \pagestyle{empty}
+\newcommand{\ul}{\underline}
 \newcommand{\ulbox}[1]{\ul{\makebox[10cm]{#1}}}
 
 \begin{center}
-	\renewcommand{\baselinestretch}{3.5}
 	{\xiaoer\heiti 湖北经济学院本科毕业生毕业论文\-(毕业设计)} \\[1cm]
 	{\chuhao\bfseries 开~题~报~告~书} \\[5cm]
 
@@ -17,7 +17,6 @@
 		开题时间:& \ulbox{\kaiti\sreporttime} \\	
 	\end{tabular}
 \end{center}
-	\renewcommand{\baselinestretch}{1.5}
 
 \newpage
 
@@ -25,57 +24,62 @@
 \begin{longtable}{|l|c|l|c|l|l|}%
 	\hline
 	\xiaosi
+
 	姓\quad 名 & {\kaiti\sauthor} &
 	专业和班级 & {\kaiti\sinfop ~ \sinfoc} &
 	开题时间  &{\kaiti\sreporttime} \\
 	\hline
-	题\quad 目  & \multicolumn{5}{c|}{\kaiti\stitle} \\\hline
+	题\quad 目  & \multicolumn{5}{c|}{\kaiti\stitle} \\
+	\hline
 
 	\multicolumn{6}{|p{\textwidth}|}{
 	一、题目来源及研究的理论与实际意义
-
 	\sreportabstract
-
-	\vfill
-	}\\\hline
+	%\measureremainder{\whatsbelow}
+	%\vspace{\whatsbelow}
+	} \\
+	\hline
 
 	\multicolumn{6}{|p{\textwidth}|}{
 	二、国内外相关研究成功及研究动态描述
 
 	\sreportdescription
-
-	\vfill
-	}\\\hline
+	\measureremainder{\whatsbelow}
+	\vspace{\whatsbelow}
+	} \\
+	\hline
 
 	\multicolumn{6}{|p{\textwidth}|}{
 	三、主要研究内容  
-
 	\sreportcontent 
-
-	\vfill
-	}\\\hline
+	\measureremainder{\whatsbelow}
+	\vspace\whatsbelow
+	} \\
+	\hline
 
 	\multicolumn{6}{|p{\textwidth}|}{
 	四、本研究的关键创新点，研究方法、研究进度计划和完成时间 
 
 	\sreportschedule
+	\measureremainder{\whatsbelow}
+	\vspace{\whatsbelow}
 
-	\vfill
-	}\\\hline
+	} \\
+	\hline
 
 	\multicolumn{6}{|p{\textwidth}|}{
 	五、主要参考文献
 
 	\sreportreference 
 
-	\vfill
-	}\\\hline
+	} \\
+	\hline
 
 	\multicolumn{6}{|p{\textwidth}|}{
 	六、指导老师意见
 
 	\sreportsuggestion
-
-	\vfill
-	}\\ \hline
+	\vspace{6cm}
+	} \\
+	\hline
 \end{longtable}

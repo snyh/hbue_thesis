@@ -1,1 +1,100 @@
 \chapter{界面实现}
+WebPage一般由三种文件组成:
+\begin{enumerate}
+	\item HTML即超文本标记语言。 所以作为一种标记语言它提供的功能应该仅仅和
+		Markdown，textile一样仅仅提供标记来让作者表达思想。
+		HTML通过h1、p、div、 ul、 ol、table等带有语义的标签来表达内容。 
+		HTML本身和其他标记语言一样都是非常简单的， 但用好却是需要经验的，现在
+		依然有人乱用table标签作页面布局就是一个例子。\footnote{由于CSS 96年
+		才开始贝游览器支持，不过也已经出现14年了。}
+		如果是网站应该做到即使用户禁用CSS/JS，用户依然可以获得主要信息，这也是
+		HTML应该做的，使用一门标记语言就应该全面了解他每
+		种标记的语义，不要乱用\cite{webdesign}。
+	\item CSS即层叠样式表，主要用来对页面进行布局以及对页面元素进行精确的外观
+		控制。使用CSS后就可以根据一份内容生成多种外观\footnote{可以实现主
+		题切换；针对其他设备访问比如手机，平板进行特定优化。}，便于管理和设计。
+	\item JavaScript 是用来完成页面逻辑的\footnote{当然它也有进军服务端的趋势
+		而且势头不小，比如nodejs已经类似于一门通用脚本语言了。}。
+		它可以将一些以前需要在服务端完成的功能拿到游览器上来完成， 减轻了
+		服务器负担。 而且随着HTML5的逐渐普及， 使用JS可以完成以前只有桌面程序
+		才拥有的功能\footnote{如Cavans，Local Storage，WebGL，WebSocket等。}。
+\end{enumerate}
+
+我们这里由于是使用Web技术来做本地应用程序而不是制作网站，
+而对于应用程序来说主要不是提供内容，而是进行数据处理的，
+所以会主要依赖JavaScript来完成逻辑部分和CSS来进行美化页面。
+接下来的两节会分别讨论他们。
+\section{更方便的CSS--LeSS}
+在使用CSS\cite{css}的时候会经常遇到一些重复定义的参数， 
+这种情况写起来还好，但若遇上需要修改的时候就要一个一个
+找\footnote{如果你熟悉一种文本编辑器则会大大减轻这个时候的负担。}。
+
+还有如果你在遇到编写某个层次较深的class时，一长串前导符号写一次也
+没什么，但如果会有多个class需要定义则写着这些重复的字符串会让人
+觉得对不起自己。
+
+有时候我们会定义某种主色(或长度什么的)，然后其他元素的颜色根据这个
+主色进行一定的调整， 对于心算不行的朋友只能拿着一支笔或者开个计算器
+去算一下这可以接受但如果参考的值变动了，去修改那些依赖元素的时候又
+要小心查找修改了。
+
+LeSS\cite{less}提供了变量，混合(类似于继承)，运算以及方便的Color函数，
+可以使用命名空间有组织的管理你的css文件。
+
+学习LeSS是值得的， LeSS只在CSS的基础之上增加了一些方便的语法， 
+最终生成的还是普通CSS文件\footnote{可以直接在游览器通过less。js来
+生成最终的css文件或者在发布之前就使用一个nodejs程序lessc来生成
+css文件。}。
+\section{写的更少做的更多--- JQuery}
+jQuery\cite{jquery}作为一款快速简洁的JavaScript库，
+它可以方便的操作DOM，event，ajax等。并且可以一定程度上减少各个游览器的差异。
+
+在编写前端界面的时候，我们大量使用了jQuery。
+
+\section{WebPage与C++通讯}
+首先引进一个js函数rpc， 他有5个参数依次是
+服务名service;
+方法名method;
+数据data;
+回调函数function;
+在通讯期间是否显示notify。
+前3个参数对应于第~\ref{sec:aws}节设计的AWS::Service， 回调函数是在异步通讯完毕后需要执行的
+函数， 最后的n参数是可选的如果出现则在进行异步通讯到完成期间会出现一个滚动条
+之类的东西以便让用户知道发出的命令还在执行中，主要用在执行时间较长的调用中。
+\newpage
+\begin{javascriptcode}
+function rpc(s, m, d, f, n) {
+	if (n) $("#ajaxnotification").show();
+	$.getJSON("/rpc.cgi",
+		encodeURI(JSON.stringify({service: s,  method: m,
+					params: d, id: 0})),
+		function(data) {
+			if (n) $("#ajaxnotification").hide();
+			if (data.error === null) f(data.result);
+	});
+}
+\end{javascriptcode}
+其中encodeURI是必须的否则IE游览器会将UTF8的中文字符丢弃
+\footnote{在cp936模式下。}导致通讯错误。 
+另外这里只是简单的忽略了错误没有使用错误处理。
+
+通过这个函数我们就可以方便的与C++进行通讯，例如显示文件列表的核心函数
+refresh\_list。
+\begin{javascriptcode}
+refresh_list: function() {
+	rpc("filemanager", "file_list", null, function(data){
+		data = data || [];
+		$("#c_file_list ul.list").html("");
+			var i;
+			for (i=0; i<data.length; i++) {
+				FileList.add_info(data[i]);
+			}
+	});
+}
+\end{javascriptcode}
+这个函数通过使用rpc调用C++中的filemanager服务的file\_list方法，获得当前拥有的
+文件然后通过FileList对象的add\_info函数来进行绘制这些文件到文件列表中。
+
+因此在设计界面的时候几乎可以不用考虑数据问题，需要什么数据就直接通过rpc调用
+C++提供的服务来获得数据。
+
