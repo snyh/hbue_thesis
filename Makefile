@@ -1,15 +1,10 @@
-main: main
-	xelatex -shell-escape -8bit main
+main: main.tex init
+	xelatex -shell-escape -8bit main.tex
 
-report: report.tex
-	xelatex  report
-
-clean: 
-	rm ./.tmp/content/*
-	rm  ./.tmp/*
+report: report.tex init
+	xelatex -shell-escape -8bit report.tex
 
 init:
-	mkdir content
-	mkdir figure
+	-rm -r .tmp
 	mkdir ./.tmp
 	mkdir ./.tmp/content

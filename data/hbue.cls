@@ -58,10 +58,10 @@
 %字体映射,需要根据自己系统中有的字体进行修改,使用fc-list查看现有字体
 
 %中文字体
-\setCJKmainfont[BoldFont={Source Han Sans SC Regular}, ItalicFont={Source Han Sans SC}]%
-	{Source Han Sans SC Regular}
-\setCJKmonofont{Source Han Sans SC}
-\setCJKsansfont{Source Han Sans SC}
+\setCJKmainfont[BoldFont={Adobe Heiti Std}, ItalicFont={Adobe Kaiti Std}]%
+	{Adobe Song Std}
+\setCJKmonofont{Adobe Kaiti Std}
+\setCJKsansfont{Adobe Fangsong Std}
 %英文字体
 \setmainfont{URW Bookman L}
 \setromanfont{URW Palladio L}
@@ -70,10 +70,10 @@
 %\setCJKfamilyfont{HeiTi}{SimHei}
 %\setCJKfamilyfont{SongTi}{SimSun}
 %\setCJKfamilyfont{KaiTi}{SimKai}
-\setCJKfamilyfont{HeiTi}{Source Han Sans SC Regular}
-\setCJKfamilyfont{SongTi}{Source Han Sans SC Regular}
-\setCJKfamilyfont{FangSong}{Source Han Sans SC Regular}
-\setCJKfamilyfont{KaiTi}{Source Han Sans SC Regular}
+\setCJKfamilyfont{HeiTi}{Adobe Heiti Std}
+\setCJKfamilyfont{SongTi}{Adobe Song Std}
+\setCJKfamilyfont{FangSong}{Adobe Fangsong Std}
+\setCJKfamilyfont{KaiTi}{Adobe Kaiti Std}
 
 %为字体选择创建简单的命令
 \DeclareRobustCommand{\heiti}{\CJKfamily{HeiTi}}
