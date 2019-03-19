@@ -1,3 +1,3 @@
 #!/bin/bash
     
-docker run --rm -u $UID -v $(pwd):/work snyh/hbue_thesis
+docker run --rm -u $UID -v $(pwd):/work $* snyh/hbue_thesis

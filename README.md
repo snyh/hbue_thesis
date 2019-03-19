@@ -68,3 +68,4 @@ TODO
 - [ ] 目前开题包括的格式会乱掉，需要修复
 - [ ] 将临时文件输出到container内，避免污染工作目录
 - [ ] 将data模板等文件全部放入image内，以便最终用户直接执行hbue_thesis main.tex即可完成pdf的输出
+- [ ] fix	\includegraphics{figure/filemanger.eps} in content/thanks.tex
